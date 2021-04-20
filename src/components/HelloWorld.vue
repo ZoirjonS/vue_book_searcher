@@ -1,130 +1,212 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br />
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener"
-        >vue-cli documentation</a
-      >.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel"
-          target="_blank"
-          rel="noopener"
-          >babel</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-router"
-          target="_blank"
-          rel="noopener"
-          >router</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-vuex"
-          target="_blank"
-          rel="noopener"
-          >vuex</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint"
-          target="_blank"
-          rel="noopener"
-          >eslint</a
-        >
-      </li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li>
-        <a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a>
-      </li>
-      <li>
-        <a href="https://forum.vuejs.org" target="_blank" rel="noopener"
-          >Forum</a
-        >
-      </li>
-      <li>
-        <a href="https://chat.vuejs.org" target="_blank" rel="noopener"
-          >Community Chat</a
-        >
-      </li>
-      <li>
-        <a href="https://twitter.com/vuejs" target="_blank" rel="noopener"
-          >Twitter</a
-        >
-      </li>
-      <li>
-        <a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a>
-      </li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li>
-        <a href="https://router.vuejs.org" target="_blank" rel="noopener"
-          >vue-router</a
-        >
-      </li>
-      <li>
-        <a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a>
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-devtools#vue-devtools"
-          target="_blank"
-          rel="noopener"
-          >vue-devtools</a
-        >
-      </li>
-      <li>
-        <a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener"
-          >vue-loader</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/awesome-vue"
-          target="_blank"
-          rel="noopener"
-          >awesome-vue</a
-        >
-      </li>
-    </ul>
+  <div class="app">
+    <div class="container">
+      <div class="input-group mb-3">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Search your books here..."
+          id="bookName"
+          aria-label="Search your books here..."
+          aria-describedby="basic-addon2"
+        />
+        <div class="input-group-append">
+          <button
+            class="btn btn-outline-secondary"
+            @click="search()"
+            type="button"
+          >
+            <i class="fa fa-search"></i>
+          </button>
+        </div>
+      </div>
+      <div class="card mt-5">
+        <h4>Result</h4>
+        <table class="table">
+          <thead class="thead-light">
+            <th>Number</th>
+            <th>Icon</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Details</th>
+          </thead>
+          <tbody>
+            <tr v-for="(items, index) in data" :key="index" v-cloak class="table_tr">
+              <td>{{ index + 1 }}</td>
+              <td v-if="items.volumeInfo.imageLinks.smallThumbnail == null">
+                None
+              </td>
+              <td v-else>
+                <img
+                  :src="items.volumeInfo.imageLinks.smallThumbnail"
+                  alt="noImage"
+                />
+              </td>
+              <td>{{ items.volumeInfo.title }}</td>
+              <td v-if="items.volumeInfo.authors != null">
+                <p v-for="name in items.volumeInfo.authors" :key="name">
+                  {{ name }}
+                </p>
+                <br />
+              </td>
+              <td v-else>
+                <p>None</p>
+              </td>
+              <td>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  data-toggle="modal"
+                  data-target="#exampleModal"
+                  @click="view(index)"
+                >
+                  View
+                </button>
+
+                <!-- Modal -->
+                <div
+                  class="modal fade"
+                  id="exampleModal"
+                  tabindex="-1"
+                  role="dialog"
+                  aria-labelledby="exampleModalLabel"
+                  aria-hidden="true"
+                >
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">
+                          {{ book_name }}
+                        </h5>
+                        <button
+                          type="button"
+                          class="close"
+                          data-dismiss="modal"
+                          aria-label="Close"
+                        >
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <table class="table">
+                          <div class="row">
+                            <tbody>
+                              <tr>
+                                <div class="col-6">
+                                  <td>
+                                    <img :src="book_icon" alt="noImage" />
+                                  </td>
+                                </div>
+                                <td>
+                                  
+                                </td>
+                                <td v-if="pdf_link != ''">
+                                  <a :href="pdf_link"><i class="fas fa-file-pdf"></i>PDF download</a>                                   
+                                </td>
+                                <td v-if="epub_link !=''">
+                                  <a :href="epub_link"><i class="fas fa-file-epub"></i>EPUB download</a> 
+                                </td>
+                                <td v-else>
+                                  kechirasiz yuklab olish imkonyati mavjud emas
+                                </td>
+                              </tr>
+                            </tbody>
+                          </div>
+                        </table>
+                      </div>
+                      <div class="modal-footer">
+                        <button
+                          type="button"
+                          class="btn btn-secondary"
+                          data-dismiss="modal"
+                        >
+                          Close
+                        </button>
+                        <button type="button" class="btn btn-primary">
+                          Save changes
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
-  name: "HelloWorld",
-  props: {
-    msg: String,
+  name: "app",
+  props: {},
+  data() {
+    return {
+      data: [],
+      book_icon: "",
+      book_name: "",
+      published_date: null,
+      searchInfo: "",
+      epub_link: '',
+      pdf_link: '',
+    };
+  },
+  created() {},
+  mounted() {},
+  methods: {
+    search: function () {
+      let val = document.getElementById("bookName").value;
+      axios
+        .get("https://www.googleapis.com/books/v1/volumes?q=" + val)
+        // https://www.pdfdrive.com/search?q=python&pagecount=&pubyear=&searchin=&em=
+        // .get('http://localhost:8080/search?q='+val+'&pagecount=&pubyear=&searchin=&em=')
+        .then((response) => {
+          // (this.info = response)
+          this.data = response.data.items;
+          console.log(response.data.items);
+        });
+    },
+    view: function (index) {
+      this.book_name = this.data[index].volumeInfo.title;
+      this.book_icon = this.data[index].volumeInfo.imageLinks.smallThumbnail;
+      this.searchInfo = this.data[index].searchInfo.textSnippet;
+
+      if(this.data[index].accessInfo.epub.isAvailable){
+        this.epub_link = this.data[index].accessInfo.epub.downloadLink
+        if(this.epub_link ==''){
+          this.epub_link = this.data[index].accessInfo.epub.acsTokenLink
+        }
+      }
+      if(this.data[index].accessInfo.pdf.isAvailable){
+        this.pdf_link = this.data[index].accessInfo.pdf.downloadLink
+        this.pdf_link = this.data[index].accessInfo.pdf.acsTokenLink
+         console.log(this.pdf_link)
+         if(this.pdf_link == ''){ 
+           console.log('pustoy pdf link')
+          this.pdf_link = this.data[index].accessInfo.pdf.acsTokenLink
+        }
+          console.log(this.pdf_link)
+      }
+      console.log(this.data[index].volumeInfo.title);
+    },
   },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
+[v-cloak] {
+  display: none;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
+.table_tr:hover {
+  background-color: deepskyblue;
+  /* cursor: pointer; */
 }
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
+.modal-content {
+  text-align: center;
 }
 </style>
