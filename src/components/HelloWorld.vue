@@ -31,10 +31,15 @@
             <th>Details</th>
           </thead>
           <tbody>
-            <tr v-for="(items, index) in data" :key="index" v-cloak class="table_tr">
+            <tr
+              v-for="(items, index) in data"
+              :key="index"
+              v-cloak
+              class="table_tr"
+            >
               <td>{{ index + 1 }}</td>
               <td v-if="items.volumeInfo.imageLinks.smallThumbnail == null">
-                None
+                none
               </td>
               <td v-else>
                 <img
@@ -50,14 +55,14 @@
                 <br />
               </td>
               <td v-else>
-                <p>None</p>
+                <p>none</p>
               </td>
               <td>
                 <button
                   type="button"
                   class="btn btn-primary"
                   data-toggle="modal"
-                  data-target="#exampleModal"
+                  data-target=".bd-example-modal-lg"
                   @click="view(index)"
                 >
                   View
@@ -65,14 +70,14 @@
 
                 <!-- Modal -->
                 <div
-                  class="modal fade"
-                  id="exampleModal"
+                  class="modal fade bd-example-modal-lg"
                   tabindex="-1"
                   role="dialog"
-                  aria-labelledby="exampleModalLabel"
+                  aria-labelledby="myLargeModalLabel"
                   aria-hidden="true"
                 >
-                  <div class="modal-dialog" role="document">
+                  >
+                  <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel">
@@ -87,7 +92,7 @@
                           <span aria-hidden="true">&times;</span>
                         </button>
                       </div>
-                      <div class="modal-body">
+                      <div class="modal-body container-fluid">
                         <table class="table">
                           <div class="row">
                             <tbody>
@@ -97,17 +102,22 @@
                                     <img :src="book_icon" alt="noImage" />
                                   </td>
                                 </div>
-                                <td>
-                                  
-                                </td>
-                                <td v-if="pdf_link != ''">
-                                  <a :href="pdf_link"><i class="fas fa-file-pdf"></i>PDF download</a>                                   
-                                </td>
-                                <td v-if="epub_link !=''">
-                                  <a :href="epub_link"><i class="fas fa-file-epub"></i>EPUB download</a> 
+                                <td></td>
+                                <td v-if="pdf_link != '' && epub_link != ''">
+                                  <a :href="pdf_link"
+                                    ><i class="fas fa-file-pdf"></i>PDF
+                                    download</a
+                                  >
+                                  <a :href="epub_link"
+                                    ><i class="fas fa-file-epub"></i>EPUB
+                                    download</a
+                                  >
                                 </td>
                                 <td v-else>
-                                  kechirasiz yuklab olish imkonyati mavjud emas
+                                  It's not available to download :(
+                                </td>
+                                <td>
+                                  <p v-html="searchInfo"></p>
                                 </td>
                               </tr>
                             </tbody>
@@ -150,9 +160,9 @@ export default {
       book_icon: "",
       book_name: "",
       published_date: null,
-      searchInfo: "",
-      epub_link: '',
-      pdf_link: '',
+      searchInfo: null,
+      epub_link: "",
+      pdf_link: "",
     };
   },
   created() {},
@@ -175,21 +185,21 @@ export default {
       this.book_icon = this.data[index].volumeInfo.imageLinks.smallThumbnail;
       this.searchInfo = this.data[index].searchInfo.textSnippet;
 
-      if(this.data[index].accessInfo.epub.isAvailable){
-        this.epub_link = this.data[index].accessInfo.epub.downloadLink
-        if(this.epub_link ==''){
-          this.epub_link = this.data[index].accessInfo.epub.acsTokenLink
+      if (this.data[index].accessInfo.epub.isAvailable) {
+        this.epub_link = this.data[index].accessInfo.epub.downloadLink;
+        if (this.epub_link == "") {
+          this.epub_link = this.data[index].accessInfo.epub.acsTokenLink;
         }
       }
-      if(this.data[index].accessInfo.pdf.isAvailable){
-        this.pdf_link = this.data[index].accessInfo.pdf.downloadLink
-        this.pdf_link = this.data[index].accessInfo.pdf.acsTokenLink
-         console.log(this.pdf_link)
-         if(this.pdf_link == ''){ 
-           console.log('pustoy pdf link')
-          this.pdf_link = this.data[index].accessInfo.pdf.acsTokenLink
+      if (this.data[index].accessInfo.pdf.isAvailable) {
+        this.pdf_link = this.data[index].accessInfo.pdf.downloadLink;
+        this.pdf_link = this.data[index].accessInfo.pdf.acsTokenLink;
+        console.log(this.pdf_link);
+        if (this.pdf_link == "") {
+          console.log("pustoy pdf link");
+          this.pdf_link = this.data[index].accessInfo.pdf.acsTokenLink;
         }
-          console.log(this.pdf_link)
+        console.log(this.pdf_link);
       }
       console.log(this.data[index].volumeInfo.title);
     },
